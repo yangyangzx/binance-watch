@@ -18,7 +18,7 @@ ExecStart=/home/yangyangzx/go/binance-watch/bin/watchd \
     -env /home/yangyangzx/script/.env \
     -proxy http://127.0.0.1:7890 \
     -data /home/yangyangzx/go/binance-watch/data \
-    -web 127.0.0.1:8090
+    -web 127.0.0.1:8091
 Restart=always
 RestartSec=5
 # 退出时要把邮件队列里剩余的发完（最多 15s），留足时间

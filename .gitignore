@@ -3,3 +3,7 @@ data/
 *.tmp
 *.lock
 .DS_Store
+fakebinance
+.impeccable/
+.workbuddy/
+.claude/
