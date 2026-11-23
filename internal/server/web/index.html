@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>binance-watch</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0f14'/%3E%3Cpath d='M16 5l4 4-4 4-4-4zM9 12l4 4-4 4-4-4zM23 12l4 4-4 4-4-4zM16 19l4 4-4 4-4-4z' fill='%23f0b90b'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true"></span><b>binance-watch</b><span class="sub">价格哨兵</span></div>
+  <div class="pills">
+    <span class="pill" id="p-ws"><i class="dot"></i><span>WS</span></span>
+    <span class="pill" id="p-feed"><i class="dot"></i><span>行情</span></span>
+    <span class="pill mute" id="p-up">运行 --</span>
+    <span class="pill mute" id="p-mail">待发邮件 0</span>
+  </div>
+</header>
+<div id="banner" class="banner" hidden></div>
+
+<main>
+  <section>
+    <h2>行情</h2>
+    <div id="symbols" class="grid"></div>
+  </section>
+
+  <section class="cols">
+    <div class="col-main">
+      <h2>规则 <span class="count" id="rule-count"></span></h2>
+      <div id="rules" class="rules"></div>
+    </div>
+
+    <aside class="col-side">
+      <h2>新建规则</h2>
+      <form id="form" class="panel" autocomplete="off">
+        <div class="seg" role="tablist" aria-label="规则类型" id="seg-type">
+          <button type="button" role="tab" data-v="target" class="on" aria-selected="true">到价</button>
+          <button type="button" role="tab" data-v="pct" aria-selected="false">涨跌幅</button>
+          <button type="button" role="tab" data-v="near" aria-selected="false">接近</button>
+        </div>
+
+        <label>交易对
+          <input id="f-symbol" list="dl-symbols" placeholder="BTCUSDT" maxlength="24" required spellcheck="false">
+          <datalist id="dl-symbols"></datalist>
+        </label>
+
+        <div id="g-target" class="grp">
+          <div class="seg small" role="tablist" aria-label="到价方向" id="seg-dir-t"><button type="button" role="tab" data-v="above" class="on" aria-selected="true">≥ 涨到</button><button type="button" role="tab" data-v="below" aria-selected="false">≤ 跌到</button></div>
+          <label>目标价<input id="f-target" inputmode="decimal" placeholder="70000"></label>
+        </div>
+
+        <div id="g-pct" class="grp" hidden>
+          <div class="seg small" role="tablist" aria-label="涨跌幅方向" id="seg-dir-p"><button type="button" role="tab" data-v="up" aria-selected="false">上涨</button><button type="button" role="tab" data-v="down" aria-selected="false">下跌</button><button type="button" role="tab" data-v="auto" class="on" aria-selected="true">双向</button></div>
+          <div class="row2">
+            <label>幅度 %<input id="f-pct" inputmode="decimal" placeholder="3"></label>
+            <label>窗口<select id="f-window"><option value="5">5 分钟</option><option value="15">15 分钟</option><option value="60" selected>1 小时</option><option value="240">4 小时</option></select></label>
+          </div>
+        </div>
+
+        <div id="g-near" class="grp" hidden>
+          <div class="row2">
+            <label>目标价<input id="f-ntarget" inputmode="decimal" placeholder="150"></label>
+            <label>距离 %<input id="f-near" inputmode="decimal" placeholder="0.5"></label>
+          </div>
+        </div>
+
+        <div class="row2">
+          <label>冷却（分钟）<input id="f-cd" inputmode="numeric" value="30"></label>
+          <label class="chk"><input type="checkbox" id="f-once"><span>触发一次即停用</span></label>
+        </div>
+        <label>备注（可选）<input id="f-note" maxlength="200" placeholder="例如：突破压力位"></label>
+        <button class="btn primary" type="submit" id="btn-add">添加规则</button>
+        <p class="hint" id="hint"></p>
+      </form>
+    </aside>
+  </section>
+
+  <section>
+    <h2>邮件收件人</h2>
+    <form id="mail-form" class="panel" autocomplete="off">
+      <p class="hint">告警邮件发给谁。多个地址用逗号或分号分隔，保存后立即生效，无需重启。</p>
+      <label>收件人邮箱
+        <input id="m-to" placeholder="ops@qq.com; dev@outlook.com" maxlength="2048" spellcheck="false" required>
+      </label>
+      <div class="mail-actions">
+        <button class="btn primary" type="submit" id="btn-mail-save">保存收件人</button>
+        <button class="btn" type="button" id="btn-mail-test">发送测试邮件</button>
+      </div>
+      <p class="hint" id="mail-hint"></p>
+    </form>
+  </section>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>

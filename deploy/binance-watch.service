@@ -1,0 +1,43 @@
+[Unit]
+Description=binance-watch price sentinel
+After=network-online.target
+Wants=network-online.target
+# 如果代理（clash/mihomo）是本机服务，取消注释并改成实际的 unit 名，保证先于哨兵启动：
+#After=mihomo.service
+# 防止像 mihomo 那样重启 51 次刷屏：5 分钟内最多 5 次重启
+# （注意：这两项必须在 [Unit] 段，放在 [Service] 段 systemd 会忽略）
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=yangyangzx
+Group=yangyangzx
+WorkingDirectory=/home/yangyangzx/go/binance-watch
+ExecStart=/home/yangyangzx/go/binance-watch/bin/watchd \
+    -env /home/yangyangzx/script/.env \
+    -proxy http://127.0.0.1:7890 \
+    -data /home/yangyangzx/go/binance-watch/data \
+    -web 127.0.0.1:8090
+Restart=always
+RestartSec=5
+# 退出时要把邮件队列里剩余的发完（最多 15s），留足时间
+TimeoutStopSec=25
+
+# 程序用 -proxy 显式指定代理，不需要也不应继承 shell 里的坏代理
+Environment=NO_PROXY=localhost,127.0.0.1
+
+# 硬限制：Go 运行时按 GOMEMLIMIT 提前回收，避免撞上 cgroup 的 MemoryMax 被 OOM
+Environment=GOMEMLIMIT=60MiB
+MemoryMax=80M
+CPUQuota=90%
+LimitCORE=0
+
+# 加固（SD 卡友好：日志走 journald，只有 data/ 可写）
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/home/yangyangzx/go/binance-watch/data
+
+[Install]
+WantedBy=multi-user.target
